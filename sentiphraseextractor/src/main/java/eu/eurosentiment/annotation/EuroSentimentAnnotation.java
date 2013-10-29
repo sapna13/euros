@@ -227,7 +227,7 @@ public class EuroSentimentAnnotation {
 			}
 		}			
 
-	
+
 
 		return mentionClassSentence;
 		//		for(String s : mentionClassSentence){
@@ -243,12 +243,12 @@ public class EuroSentimentAnnotation {
 
 	public static void main(String[] args) {
 		//String aelaDataPath = "es/TripAdvisor_AELAOutput_10k";
-		
-		
+
+
 		//String aelaDataPath = "es/TripAdvisorAELAOutput_1500_1";
 		String aelaDataPath = args[0];
-		
-		
+
+
 		//String tripRawDataPath = "es/RawTripAdvisorData";
 		File dir = new File(aelaDataPath);
 		CLESA clesa = new CLESA();
@@ -266,38 +266,38 @@ public class EuroSentimentAnnotation {
 			System.out.println("fileName   " + file.getName());
 
 			try {
-			
-			EuroSentimentAnnotation esAnno = new EuroSentimentAnnotation(file.getAbsolutePath());			
-			
-			Set<String> mentionClassSentences = esAnno.getMentionClassSentence(clesa, file.getName());
-			Map<String, Long> scoreMap = esAnno.getScoreMapByParsingRawTripAdvisor(file.getName());
 
-			for(String mentionClassSentence : mentionClassSentences){
-				String[] split = mentionClassSentence.split("-----");
-				String mention  = split[0];
-				String mentionClass = split[1];
-				String sentence = split[2];				
-			
-				Map<String, List<String>> tagTextMap = StanfordNLP.getTagText(sentence, tags);								
-				for(String tag : tags){
-					List<String> tagTexts = tagTextMap.get(tag);
-					for(String tagText : tagTexts){
-						boolean senti = containsSenti(tagText);
-						if(senti){		
-							if(getLength(tagText)<4)
-								buffer.append(mention + "\t"+ mentionClass + "\t" + tagText + "\t" + scoreMap.get(mentionClass)+"\n");
-							//	System.out.println(buffer);
-						}
-					}
-				}							
-			}
+				EuroSentimentAnnotation esAnno = new EuroSentimentAnnotation(file.getAbsolutePath());			
+
+				//			Set<String> mentionClassSentences = esAnno.getMentionClassSentence(clesa, file.getName());
+				//			Map<String, Long> scoreMap = esAnno.getScoreMapByParsingRawTripAdvisor(file.getName());
+				//
+				//			for(String mentionClassSentence : mentionClassSentences){
+				//				String[] split = mentionClassSentence.split("-----");
+				//				String mention  = split[0];
+				//				String mentionClass = split[1];
+				//				String sentence = split[2];				
+				//			
+				//				Map<String, List<String>> tagTextMap = StanfordNLP.getTagText(sentence, tags);								
+				//				for(String tag : tags){
+				//					List<String> tagTexts = tagTextMap.get(tag);
+				//					for(String tagText : tagTexts){
+				//						boolean senti = containsSenti(tagText);
+				//						if(senti){		
+				//							if(getLength(tagText)<4)
+				//								buffer.append(mention + "\t"+ mentionClass + "\t" + tagText + "\t" + scoreMap.get(mentionClass)+"\n");
+				//							//	System.out.println(buffer);
+				//						}
+				//					}
+				//				}							
+				//			}
 			} catch(Exception e){
-				
+
 			}
 		}
 		clesa.close();
 
-	
+
 		BasicFileTools.writeFile(args[1], buffer.toString().trim());
 	}
 
