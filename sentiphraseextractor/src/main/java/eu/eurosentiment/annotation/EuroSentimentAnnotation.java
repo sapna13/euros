@@ -101,11 +101,11 @@ public class EuroSentimentAnnotation {
 
 
 
-	private Map<String, Long> getScoreMapByParsingRawTripAdvisor(String aelaFileName) {
+	private Map<String, Long> getScoreMapByParsingRawTripAdvisor(String aelaFileName, String rawDataPath) {
 		aelaFileName = aelaFileName.replace(".txt", "").trim();
 
 		Map<String, Long> fieldValueMap = new HashMap<String, Long>();
-		String filePath = "es/RawTripAdvisorData/" + aelaFileName + ".json";		
+		String filePath = rawDataPath + "/" + aelaFileName + ".json";		
 		JSONParser parser = new JSONParser();
 		JSONObject jsonObject = null;
 		try {
@@ -268,7 +268,7 @@ public class EuroSentimentAnnotation {
 			try {
 				EuroSentimentAnnotation esAnno = new EuroSentimentAnnotation(file.getAbsolutePath());			
 				Set<String> mentionClassSentences = esAnno.getMentionClassSentence(clesa, file.getName());
-				Map<String, Long> scoreMap = esAnno.getScoreMapByParsingRawTripAdvisor(file.getName());
+				Map<String, Long> scoreMap = esAnno.getScoreMapByParsingRawTripAdvisor(file.getName(), args[2]);
 				for(String mentionClassSentence : mentionClassSentences){
 					String[] split = mentionClassSentence.split("-----");
 					String mention  = split[0];
