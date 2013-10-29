@@ -266,33 +266,30 @@ public class EuroSentimentAnnotation {
 			System.out.println("fileName   " + file.getName());
 
 			try {
-
 				EuroSentimentAnnotation esAnno = new EuroSentimentAnnotation(file.getAbsolutePath());			
+				Set<String> mentionClassSentences = esAnno.getMentionClassSentence(clesa, file.getName());
+				Map<String, Long> scoreMap = esAnno.getScoreMapByParsingRawTripAdvisor(file.getName());
+				for(String mentionClassSentence : mentionClassSentences){
+					String[] split = mentionClassSentence.split("-----");
+					String mention  = split[0];
+					String mentionClass = split[1];
+					String sentence = split[2];				
 
-				//			Set<String> mentionClassSentences = esAnno.getMentionClassSentence(clesa, file.getName());
-				//			Map<String, Long> scoreMap = esAnno.getScoreMapByParsingRawTripAdvisor(file.getName());
-				//
-				//			for(String mentionClassSentence : mentionClassSentences){
-				//				String[] split = mentionClassSentence.split("-----");
-				//				String mention  = split[0];
-				//				String mentionClass = split[1];
-				//				String sentence = split[2];				
-				//			
-				//				Map<String, List<String>> tagTextMap = StanfordNLP.getTagText(sentence, tags);								
-				//				for(String tag : tags){
-				//					List<String> tagTexts = tagTextMap.get(tag);
-				//					for(String tagText : tagTexts){
-				//						boolean senti = containsSenti(tagText);
-				//						if(senti){		
-				//							if(getLength(tagText)<4)
-				//								buffer.append(mention + "\t"+ mentionClass + "\t" + tagText + "\t" + scoreMap.get(mentionClass)+"\n");
-				//							//	System.out.println(buffer);
-				//						}
-				//					}
-				//				}							
-				//			}
+					Map<String, List<String>> tagTextMap = StanfordNLP.getTagText(sentence, tags);								
+					for(String tag : tags){
+						List<String> tagTexts = tagTextMap.get(tag);
+						for(String tagText : tagTexts){
+							boolean senti = containsSenti(tagText);
+							if(senti){		
+								if(getLength(tagText)<4)
+									buffer.append(mention + "\t"+ mentionClass + "\t" + tagText + "\t" + scoreMap.get(mentionClass)+"\n");
+								//	System.out.println(buffer);
+							}
+						}
+					}							
+				}
 			} catch(Exception e){
-
+				System.out.println("Skipped" + file.getName());
 			}
 		}
 		clesa.close();
