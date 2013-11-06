@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
@@ -26,11 +27,13 @@ public class SynsetIdentification {
 	private static CLESA clesa = new CLESA();
 	private static Properties config = new Properties();
 	private static String wnhome = null;
+	private static IDictionary dict = null;
 
-	private static void loadConfig(String configFilePath){
+	public static void loadConfig(String configFilePath){
 		try {
 			config.load(new FileInputStream(configFilePath));
 			wnhome = config.getProperty("WNHOME");
+		
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -38,14 +41,29 @@ public class SynsetIdentification {
 		}			
 	}	
 
+	public static void openDict(){
+		String path = wnhome + File.separator + "dict"; 
+		URL url;
+		try {
+			url = new URL("file", null, path);
+			dict = new Dictionary(url); 
+			dict.open();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 
 	public static String getSynsetId(String sentimentPhrase, String entity) throws IOException {
-		System.out.println(sentimentPhrase + "  " + entity);
+		//System.out.println(sentimentPhrase + "  " + entity);
 		//	String wnhome = System.getenv("WNHOME");
 		String maxScoredSynset = null;
 		try {			
-			String path = wnhome + File.separator + "dict"; URL url = new URL("file", null, path);
-			IDictionary dict = new Dictionary(url); dict.open();
 			//String instance = "The room was fine";		
 			//String entity = "knowledgeable student";
 			//String sentimentPhrase = "knowledgeable";	
@@ -97,6 +115,7 @@ public class SynsetIdentification {
 		String sentimentPhrase = args[0];
 		String entity = args[1];
 		String synsetId = getSynsetId(sentimentPhrase, entity);
+		System.out.println(synsetId);
 		BasicFileTools.writeFile("output.txt", synsetId);
 		System.out.println(synsetId);
 		clesa.close();

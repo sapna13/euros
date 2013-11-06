@@ -8,11 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import eu.eurosentiment.synset.SynsetIdentification;
 import eu.monnetproject.clesa.core.utils.BasicFileTools;
 
 public class LexiconCollector {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		String dirPath = "src/main/resources/output/new";
 		Map<String, Double> mentionPhraseScoreMap = new HashMap<String, Double>();
 		File dir = new File (dirPath);
@@ -56,13 +57,27 @@ public class LexiconCollector {
 			if(mentionPhraseMap.get(mention)==null)
 				mentionPhraseMap.put(mention, new ArrayList<String>());
 			mentionPhraseMap.get(mention).add(phrase);			
-		}
+		}	
+		
+		SynsetIdentification.loadConfig("load/eu.monnetproject.clesa.CLESA.properties");
+	
+//		System.out.println(synsetId);
+//		BasicFileTools.writeFile("output.txt", synsetId);
+//		
+		
 		
 		for(String mention : mentionPhraseMap.keySet()){
 			List<String> phrases = mentionPhraseMap.get(mention);
 			for(String phrase : phrases){
 				Double score = mentionPhraseScoreMap.get(mention + "-----" + phrase);
-				buffer.append(mention + "\t,\t" + phrase + "\t,\t" + score);
+				
+				String sentimentPhrase = phrase;
+				String context = mention + " hotel";
+				
+				String synsetId = SynsetIdentification.getSynsetId(sentimentPhrase, context);
+				String line = mention + "\t,\t" + phrase + "\t,\t" + score + "\t,\t" + synsetId;
+				buffer.append(line);
+				System.out.println(line);
 				buffer.append("\n");
 			}
 		}

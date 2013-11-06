@@ -8,11 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import eu.eurosentiment.synset.SynsetIdentification;
 import eu.monnetproject.clesa.core.utils.BasicFileTools;
 
 public class LexiconCollector_phrase {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		String dirPath = "src/main/resources/output/new";
 		Map<String, Double> mentionPhraseScoreMap = new HashMap<String, Double>();
 		File dir = new File (dirPath);
@@ -43,6 +44,7 @@ public class LexiconCollector_phrase {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			reader.close();
 		}
 
 		StringBuffer buffer = new StringBuffer();
@@ -58,23 +60,29 @@ public class LexiconCollector_phrase {
 			phraseMentionMap.get(phrase).add(mention);			
 		}
 		
+		SynsetIdentification.loadConfig("load/eu.monnetproject.clesa.CLESA.properties");
+		SynsetIdentification.openDict();
+		
+		int j = 0;
 		for(String phrase : phraseMentionMap.keySet()){
 			List<String> mentions = phraseMentionMap.get(phrase);
 			for(String mention : mentions){
 				Double score = mentionPhraseScoreMap.get(mention + "-----" + phrase);
-				buffer.append(mention + "\t,\t" + phrase + "\t,\t" + score);
+				
+				String sentimentPhrase = phrase;
+				String context = mention + " hotel";
+				
+				String synsetId = SynsetIdentification.getSynsetId(sentimentPhrase, context);
+				String line = mention.trim() + "\t,\t" + phrase.trim() + "\t,\t" + score + "\t,\t" + synsetId;
+				buffer.append(line);
+	//			buffer.append(mention + "\t,\t" + phrase + "\t,\t" + score);
 				buffer.append("\n");
+				System.out.println(j++ + " " + line);				
+				
 			}
 		}
 		
-//		for(String mentionPhrase : mentionPhraseScoreMap.keySet()){
-//			String[] split = mentionPhrase.split("-----");
-//			String mention = split[0].toLowerCase();
-//			String phrase = split[1].toLowerCase();
-//			Double score = mentionPhraseScoreMap.get(mentionPhrase);
-//			buffer.append(mention + "\t,\t" + phrase + "\t,\t" + score);
-//			buffer.append("\n");
-//		}
+		System.out.println("Completed ");
 
 		BasicFileTools.writeFile("src/main/resources/finalOutput_new_avgScored_keyPhrase.txt", buffer.toString().trim());
 
