@@ -70,7 +70,7 @@ public class LexiconCollector_phrase {
 				Double score = mentionPhraseScoreMap.get(mention + "-----" + phrase);
 				
 				String sentimentPhrase = phrase;
-				String context = mention + " hotel";
+				String context = mention;
 				
 				String synsetId = SynsetIdentification.getSynsetId(sentimentPhrase, context);
 				String line = mention.trim() + "\t,\t" + phrase.trim() + "\t,\t" + score + "\t,\t" + synsetId;
