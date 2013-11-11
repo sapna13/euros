@@ -30,7 +30,7 @@ import eu.monnetproject.clesa.core.utils.VectorUtils;
 
 /**
  * A class to read 
- * @author saurabh
+ * @author sapna
  *
  */
 public class EuroSentimentAnnotation {
